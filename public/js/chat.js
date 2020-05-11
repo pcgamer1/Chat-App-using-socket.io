@@ -10,6 +10,7 @@ $messages = document.querySelector('#messages')
 const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
 
 const messageTemplate = document.querySelector('#message-template').innerHTML
+const sidebarTemplate = document.querySelector('#sidebar-template').innerHTML
 
 socket.on('pvtMessage', (data) => {
     console.log('From: ', data.username, 'Message: ', data.text)
@@ -31,6 +32,14 @@ socket.on('message', (data) => {
     })
     $messages.insertAdjacentHTML('beforeend', html)
 })
+
+// socket.on('usersData', ({ userdata }) => {
+//     console.log(userdata)
+//     const html = Mustache.render(sidebarTemplate, {
+//         userdata
+//     })
+//     document.querySelector('#sidebar').innerHTML = html
+// })
 
 // $signupForm.addEventListener('submit', (e) => {
 //     e.preventDefault()

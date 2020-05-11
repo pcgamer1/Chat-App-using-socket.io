@@ -27,6 +27,9 @@ io.on('connection', (socket) => {
         addedUser = true;
         users[username] = socket;
         socket.username = username;
+        // io.emit('usersData', {
+        //     userdata: user.keys()
+        // })
         socket.broadcast.emit('message', generateMessage('has joined!', username))
     })
 
@@ -51,6 +54,9 @@ io.on('connection', (socket) => {
         if(addedUser)
             delete users[socket.username]
         io.emit('message', generateMessage('has left', socket.username))
+        io.emit('usersData', {
+            userdata: users.keys()
+        })
     })
 })
 
