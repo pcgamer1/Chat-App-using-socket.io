@@ -9,7 +9,7 @@ const app = express()
 const server = http.createServer(app)
 const io = socketio(server)
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3001
 const publicDirectoryPath = path.join(__dirname, '../public')
 
 app.use(express.static(publicDirectoryPath))
@@ -18,18 +18,19 @@ pathViews = path.join(__dirname,'../templates/views')
 let count = 0
 var addedUser = false;
 users = {}
+userdatabase = []
 io.on('connection', (socket) => {
     console.log('New web-socket connection')
 
     socket.on('join', ({ username }) => {
-
+        var user = new Object()
+        user['username'] = username;
+        userdatabase.push(user)
         socket.emit('message', generateMessage('Welcome!', 'Server'))
         addedUser = true;
         users[username] = socket;
         socket.username = username;
-        // io.emit('usersData', {
-        //     userdata: user.keys()
-        // })
+        io.emit('usersData', userdatabase)
         socket.broadcast.emit('message', generateMessage('has joined!', username))
     })
 
@@ -51,12 +52,14 @@ io.on('connection', (socket) => {
     })
 
     socket.on('disconnect', () => {
-        if(addedUser)
+        if(addedUser) {
             delete users[socket.username]
+            userdatabase = userdatabase.filter(( user ) => {
+                return user.username !== socket.username;
+            });
+        }
         io.emit('message', generateMessage('has left', socket.username))
-        io.emit('usersData', {
-            userdata: users.keys()
-        })
+        io.emit('usersData', userdatabase)
     })
 })
 

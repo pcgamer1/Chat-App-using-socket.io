@@ -33,13 +33,13 @@ socket.on('message', (data) => {
     $messages.insertAdjacentHTML('beforeend', html)
 })
 
-// socket.on('usersData', ({ userdata }) => {
-//     console.log(userdata)
-//     const html = Mustache.render(sidebarTemplate, {
-//         userdata
-//     })
-//     document.querySelector('#sidebar').innerHTML = html
-// })
+socket.on('usersData', (userdatabase) => {
+    // console.log(userdata)
+    const html = Mustache.render(sidebarTemplate, {
+        userdatabase
+    })
+    document.querySelector('#sidebar').innerHTML = html
+})
 
 // $signupForm.addEventListener('submit', (e) => {
 //     e.preventDefault()
@@ -57,6 +57,8 @@ $messageForm.addEventListener('submit', (e) => {
     if(!uni)
         return socket.emit('uniMessage', e.target.elements.message.value, (error) => {
             $messageFormButton.removeAttribute('disabled')
+            $messageFormInput.value = ''
+            $messageFormInput.focus()
             if(error) {
                 const html = Mustache.render(messageTemplate, {
                     user: 'Server',
@@ -65,14 +67,14 @@ $messageForm.addEventListener('submit', (e) => {
                 })
                 $messages.insertAdjacentHTML('beforeend', html)
             }
-            else {
-                const html = Mustache.render(messageTemplate, {
-                    user: 'Server',
-                    message: 'Message Delivered',
-                    time: moment(new Date().getTime()).format('h:mm a')
-                })
-                $messages.insertAdjacentHTML('beforeend', html)
-            }
+            // else {
+            //     const html = Mustache.render(messageTemplate, {
+            //         user: 'Server',
+            //         message: 'Message Delivered',
+            //         time: moment(new Date().getTime()).format('h:mm a')
+            //     })
+            //     $messages.insertAdjacentHTML('beforeend', html)
+            // }
         })
     const msg = e.target.elements.message.value.split(" ")
     const to = msg[0].replace('@','')
@@ -83,6 +85,8 @@ $messageForm.addEventListener('submit', (e) => {
         message: fmsg
     }, (error) => {
         $messageFormButton.removeAttribute('disabled')
+        $messageFormInput.value = ''
+        $messageFormInput.focus()
         if(error) {
             const html = Mustache.render(messageTemplate, {
                 user: 'Server',
